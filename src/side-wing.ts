@@ -1,12 +1,12 @@
-import { Wing } from '@lib/wings';
-import { SidePulse, Payload } from '@lib/chrome-pulse';
+import { Wing, BaseState } from '@mirawision/wings';
+import { SidePulse, Payload } from '@mirawision/chrome-pulse';
 
 /**
  * SideWing class for managing state in Chrome extension side panel
  * @template T - The type of state data, must extend NonNullable<Payload>
  * @extends Wing<T>
  */
-class SideWing<T extends NonNullable<Payload>> extends Wing<T> {
+class SideWing<T extends NonNullable<Payload> & BaseState> extends Wing<T> {
   protected messenger: SidePulse;
 
   /**
@@ -44,7 +44,7 @@ class SideWing<T extends NonNullable<Payload>> extends Wing<T> {
    * @protected
    * @param newState - New state or partial state to set
    */
-  protected setState(newState: T | Partial<T>): void {
+  public setState(newState: T | Partial<T>): void {
     super.setState(newState);
 
     this.messenger.sendMessage('update', this.getState());

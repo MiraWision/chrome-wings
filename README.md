@@ -40,21 +40,28 @@ import { GlobalWing } from '@mirawision/chrome-wings';
 
 // Define your state type
 interface UserState {
-  isLoggedIn: boolean;
-  username: string;
+  user: {
+    name: string;
+    preferences: {
+      theme: 'light' | 'dark';
+    };
+  } | null;
 }
 
-// Initialize global state
-const userWing = new GlobalWing<UserState>('user', {
-  isLoggedIn: false,
-  username: ''
-});
+// Create a global service to manage user state
+class UserService extends GlobalWing<UserState> {
+  constructor() {
+    super('user', { user: null });
+  }
 
-// Update state
-userWing.setState({
-  isLoggedIn: true,
-  username: 'john.doe'
-});
+  // Initialize user data
+  async loadUser() {
+    const userData = await fetchUserData(); // Your API call
+    this.setState({ user: userData });
+  }
+}
+
+const userService = new UserService();
 ```
 
 ### Local State (Content Script)
@@ -63,21 +70,35 @@ userWing.setState({
 import { LocalWing } from '@mirawision/chrome-wings';
 
 // Define your state type
-interface PageState {
-  darkMode: boolean;
-  fontSize: number;
+interface UserState {
+  user: {
+    name: string;
+    preferences: {
+      theme: 'light' | 'dark';
+    };
+  } | null;
 }
 
-// Initialize local state
-const pageWing = new LocalWing<PageState>('page', {
-  darkMode: false,
-  fontSize: 16
-});
+// Create a local service to access user state
+class UserLocalService extends LocalWing<UserState> {
+  constructor() {
+    super('user', { user: null });
+  }
 
-// Update state
-pageWing.setState({
-  darkMode: true
-});
+  // Update user preferences
+  async updateTheme(theme: 'light' | 'dark') {
+    if (!this.state.user) return;
+    
+    this.setState({
+      user: {
+        ...this.state.user,
+        preferences: { ...this.state.user.preferences, theme }
+      }
+    });
+  }
+}
+
+const userLocalService = new UserLocalService();
 ```
 
 ### Popup State
@@ -86,21 +107,48 @@ pageWing.setState({
 import { PopupWing } from '@mirawision/chrome-wings';
 
 // Define your state type
-interface SettingsState {
-  notifications: boolean;
-  theme: 'light' | 'dark';
+interface UserState {
+  user: {
+    name: string;
+    preferences: {
+      theme: 'light' | 'dark';
+    };
+  } | null;
 }
 
-// Initialize popup state
-const settingsWing = new PopupWing<SettingsState>('settings', {
-  notifications: true,
-  theme: 'light'
-});
+// Create a popup service to manage user preferences
+class UserPopupService extends PopupWing<UserState> {
+  constructor() {
+    super('user', { user: null });
+  }
 
-// Listen for state changes
-settingsWing.subscribe((state) => {
-  console.log('Settings updated:', state);
-});
+  // Update user preferences
+  async updateTheme(theme: 'light' | 'dark') {
+    if (!this.state.user) return;
+    
+    this.setState({
+      user: {
+        ...this.state.user,
+        preferences: { ...this.state.user.preferences, theme }
+      }
+    });
+  }
+
+  // Initialize UI based on current state
+  initializeUI() {
+    this.subscribe((state) => {
+      if (state.user) {
+        const themeSwitch = document.getElementById('theme-switch');
+        if (themeSwitch) {
+          (themeSwitch as HTMLInputElement).checked = 
+            state.user.preferences.theme === 'dark';
+        }
+      }
+    });
+  }
+}
+
+const userPopupService = new UserPopupService();
 ```
 
 ### Side Panel State
@@ -109,21 +157,44 @@ settingsWing.subscribe((state) => {
 import { SideWing } from '@mirawision/chrome-wings';
 
 // Define your state type
-interface PanelState {
-  isExpanded: boolean;
-  selectedTab: string;
+interface UserState {
+  user: {
+    name: string;
+    preferences: {
+      theme: 'light' | 'dark';
+    };
+  } | null;
 }
 
-// Initialize side panel state
-const panelWing = new SideWing<PanelState>('panel', {
-  isExpanded: false,
-  selectedTab: 'home'
-});
+// Create a side panel service to manage user preferences
+class UserSideService extends SideWing<UserState> {
+  constructor() {
+    super('user', { user: null });
+  }
 
-// Update specific properties
-panelWing.setState({
-  isExpanded: true
-});
+  // Update user preferences
+  async updateTheme(theme: 'light' | 'dark') {
+    if (!this.state.user) return;
+    
+    this.setState({
+      user: {
+        ...this.state.user,
+        preferences: { ...this.state.user.preferences, theme }
+      }
+    });
+  }
+
+  // Apply theme to side panel
+  initializeSidePanel() {
+    this.subscribe((state) => {
+      if (state.user) {
+        document.body.className = state.user.preferences.theme;
+      }
+    });
+  }
+}
+
+const userSideService = new UserSideService();
 ```
 
 ## Contributing

@@ -1,3 +1,13 @@
 node_modules/
 .DS_Store
 /mirawision-chrome-wings-*.tgz
+/index.d.ts
+/index.js
+/global-wing.d.ts
+/global-wing.js
+/local-wing.d.ts
+/local-wing.js
+/popup-wing.d.ts
+/popup-wing.js
+/side-wing.d.ts
+/side-wing.js

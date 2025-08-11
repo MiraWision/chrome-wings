@@ -1,6 +1,5 @@
-import { Wing } from '@lib/wings'
-import { GlobalPulse, Payload } from '@lib/chrome-pulse'
-import type { Message } from '@lib/chrome-pulse/types'
+import { GlobalPulse, Payload, Message } from '@mirawision/chrome-pulse'
+import { Wing, BaseState } from '@mirawision/wings'
 
 /**
  * Type definition for wing message handlers in the global context
@@ -23,7 +22,7 @@ type WingHandler<T> = (
  * @template T - The type of state data, must extend Payload
  * @extends Wing<T>
  */
-export class GlobalWing<T extends Payload> extends Wing<T> {
+export class GlobalWing<T extends Payload & BaseState> extends Wing<T> {
   private messenger: GlobalPulse
 
   /**
@@ -62,7 +61,7 @@ export class GlobalWing<T extends Payload> extends Wing<T> {
    * @protected
    * @param newState - New state or partial state to set
    */
-  protected setState(newState: T | Partial<T>): void {
+  public setState(newState: T | Partial<T>): void {
     super.setState(newState)
     this.messenger.sendMessage('update', this.getState())
   }

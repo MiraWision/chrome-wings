@@ -1,12 +1,12 @@
-import { Wing } from '@lib/wings';
-import { LocalPulse, Payload } from '@lib/chrome-pulse';
+import { Wing, BaseState } from '@mirawision/wings';
+import { LocalPulse, Payload } from '@mirawision/chrome-pulse';
 
 /**
  * LocalWing class for managing local state in Chrome extensions
  * @template T - The type of state data, must extend Payload
  * @extends Wing<T>
  */
-class LocalWing<T extends Payload> extends Wing<T> {
+class LocalWing<T extends Payload & BaseState> extends Wing<T> {
   protected messenger: LocalPulse;
 
   /**
@@ -44,7 +44,7 @@ class LocalWing<T extends Payload> extends Wing<T> {
    * @protected
    * @param newState - New state or partial state to set
    */
-  protected setState(newState: T | Partial<T>): void {
+  public setState(newState: T | Partial<T>): void {
     super.setState(newState);
 
     this.messenger.sendMessage('update', this.getState());
