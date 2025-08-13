@@ -61,7 +61,7 @@
   "homepage": "https://mirawision.github.io/chrome-wings",
   "license": "MIT",
   "dependencies": {
-    "@mirawision/chrome-pulse": "1.0.0",
+    "@mirawision/chrome-pulse": "1.0.1",
     "@mirawision/wings": "1.0.0"
   },
   "devDependencies": {
