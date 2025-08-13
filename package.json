@@ -1,6 +1,6 @@
 {
   "name": "@mirawision/chrome-wings",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A TypeScript library for managing Chrome extension state across different contexts using a simple and intuitive API.",
   "main": "index.js",
   "types": "index.d.ts",
